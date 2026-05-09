@@ -1,0 +1,240 @@
+{
+  "info": {
+    "name": "Task Manager API",
+    "description": "Full-featured task management application API",
+    "version": "1.0.0",
+    "baseUrl": "http://localhost:5000/api"
+  },
+  "auth": {
+    "signup": {
+      "method": "POST",
+      "endpoint": "/auth/signup",
+      "description": "Create a new user account",
+      "body": {
+        "email": "user@example.com",
+        "password": "password123",
+        "name": "John Doe"
+      },
+      "response": {
+        "message": "User created successfully",
+        "token": "jwt_token_here",
+        "user": {
+          "id": 1,
+          "email": "user@example.com",
+          "name": "John Doe",
+          "role": "ADMIN"
+        }
+      },
+      "notes": "First user becomes ADMIN, subsequent users are MEMBER"
+    },
+    "login": {
+      "method": "POST",
+      "endpoint": "/auth/login",
+      "description": "Authenticate user and get JWT token",
+      "body": {
+        "email": "user@example.com",
+        "password": "password123"
+      },
+      "response": {
+        "message": "Login successful",
+        "token": "jwt_token_here",
+        "user": {
+          "id": 1,
+          "email": "user@example.com",
+          "name": "John Doe",
+          "role": "ADMIN"
+        }
+      },
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "projects": {
+    "create": {
+      "method": "POST",
+      "endpoint": "/projects",
+      "description": "Create a new project",
+      "auth": "required",
+      "body": {
+        "name": "Project Name",
+        "description": "Project description (optional)"
+      },
+      "response": {
+        "message": "Project created",
+        "project": {
+          "id": 1,
+          "name": "Project Name",
+          "description": "Project description",
+          "ownerId": 1,
+          "createdAt": "2026-05-07T10:00:00Z",
+          "updatedAt": "2026-05-07T10:00:00Z"
+        }
+      }
+    },
+    "getAll": {
+      "method": "GET",
+      "endpoint": "/projects",
+      "description": "Get all projects (owned or member of)",
+      "auth": "required",
+      "response": {
+        "projects": [
+          {
+            "id": 1,
+            "name": "Project Name",
+            "description": "Project description",
+            "ownerId": 1,
+            "tasks": [
+              { "id": 1, "status": "TODO" }
+            ]
+          }
+        ]
+      }
+    },
+    "getById": {
+      "method": "GET",
+      "endpoint": "/projects/:id",
+      "description": "Get project details",
+      "auth": "required"
+    },
+    "update": {
+      "method": "PUT",
+      "endpoint": "/projects/:id",
+      "description": "Update project (owner only)",
+      "auth": "required",
+      "body": {
+        "name": "Updated Name",
+        "description": "Updated description"
+      }
+    },
+    "delete": {
+      "method": "DELETE",
+      "endpoint": "/projects/:id",
+      "description": "Delete project (owner only)",
+      "auth": "required"
+    },
+    "addMember": {
+      "method": "POST",
+      "endpoint": "/projects/:id/members",
+      "description": "Add team member to project (owner only)",
+      "auth": "required",
+      "body": {
+        "userId": 2
+      }
+    },
+    "removeMember": {
+      "method": "DELETE",
+      "endpoint": "/projects/:id/members/:userId",
+      "description": "Remove team member from project (owner only)",
+      "auth": "required"
+    }
+  },
+  "tasks": {
+    "create": {
+      "method": "POST",
+      "endpoint": "/tasks",
+      "description": "Create a new task in a project",
+      "auth": "required",
+      "body": {
+        "title": "Task Title",
+        "description": "Task description (optional)",
+        "priority": "HIGH",
+        "dueDate": "2026-05-15",
+        "projectId": 1,
+        "assigneeId": 2
+      },
+      "validations": {
+        "priority": ["LOW", "MEDIUM", "HIGH"],
+        "status": ["TODO", "IN_PROGRESS", "COMPLETED"]
+      }
+    },
+    "getByProject": {
+      "method": "GET",
+      "endpoint": "/tasks/project/:projectId",
+      "description": "Get all tasks in a project",
+      "auth": "required"
+    },
+    "getMyTasks": {
+      "method": "GET",
+      "endpoint": "/tasks/user/my-tasks",
+      "description": "Get all tasks assigned to current user or in their projects",
+      "auth": "required"
+    },
+    "getStats": {
+      "method": "GET",
+      "endpoint": "/tasks",
+      "description": "Get task statistics (dashboard)",
+      "auth": "required",
+      "response": {
+        "stats": {
+          "total": 10,
+          "todo": 3,
+          "inProgress": 4,
+          "completed": 3,
+          "overdue": 2
+        }
+      }
+    },
+    "getById": {
+      "method": "GET",
+      "endpoint": "/tasks/:id",
+      "description": "Get task details",
+      "auth": "required"
+    },
+    "update": {
+      "method": "PUT",
+      "endpoint": "/tasks/:id",
+      "description": "Update task",
+      "auth": "required",
+      "body": {
+        "title": "Updated Title",
+        "description": "Updated description",
+        "status": "IN_PROGRESS",
+        "priority": "MEDIUM",
+        "dueDate": "2026-05-20",
+        "assigneeId": 2
+      }
+    },
+    "delete": {
+      "method": "DELETE",
+      "endpoint": "/tasks/:id",
+      "description": "Delete task (project owner only)",
+      "auth": "required"
+    }
+  },
+  "users": {
+    "getAll": {
+      "method": "GET",
+      "endpoint": "/users",
+      "description": "Get all users (for team assignment)",
+      "auth": "required",
+      "response": {
+        "users": [
+          {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com",
+            "role": "ADMIN"
+          }
+        ]
+      }
+    },
+    "getProfile": {
+      "method": "GET",
+      "endpoint": "/users/profile/me",
+      "description": "Get current user profile",
+      "auth": "required"
+    }
+  },
+  "headers": {
+    "authorization": "Bearer {jwt_token}",
+    "content-type": "application/json"
+  },
+  "errorCodes": {
+    "400": "Bad Request - Missing or invalid parameters",
+    "401": "Unauthorized - Invalid or missing token",
+    "403": "Forbidden - Insufficient permissions",
+    "404": "Not Found - Resource doesn't exist",
+    "500": "Server Error"
+  }
+}
