@@ -1,5 +1,5 @@
-FROM node:18-alpine
-
+FROM node:20-alpine
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 # Install dependencies
@@ -18,6 +18,4 @@ RUN npx prisma generate
 EXPOSE 5000
 
 # Start command
-# For production with SQLite (not recommended), we use db push to ensure schema is synced
-# For PostgreSQL, replace with: CMD npx prisma migrate deploy && npm start
-CMD npx prisma db push && npm start
+CMD npm start
